@@ -39,6 +39,7 @@ private:
   void SpawnRooms(unsigned int attempts);
   void SpawnMazeCooridor();
   void SpawnDoorways();
+  void CarveDeadEnds();
 };
 
 class DungeonRoom

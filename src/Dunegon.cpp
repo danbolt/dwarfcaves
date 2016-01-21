@@ -25,6 +25,7 @@ Dungeon::Dungeon(int seed, unsigned int size, unsigned int roomAttempts)
   SpawnRooms(roomAttempts);
   SpawnMazeCooridor();
   SpawnDoorways();
+  CarveDeadEnds();
 }
 
 Dungeon::CellType Dungeon::GetCellAt(unsigned int x, unsigned int y)
@@ -217,7 +218,7 @@ void Dungeon::SpawnDoorways()
       if (GetCellAt(rollX, rollY - 1) == CellType::ROCK) { rollRockNeighbourCount++; }
       if (GetCellAt(rollX, rollY + 1) == CellType::ROCK) { rollRockNeighbourCount++; }
 
-      if (rollRockNeighbourCount < 2)
+      if (rollRockNeighbourCount > 2)
       {
         i--;
         continue;
@@ -226,6 +227,38 @@ void Dungeon::SpawnDoorways()
       data[rollX][rollY] = CellType::DOORWAY;
     }
   }
+}
+
+void Dungeon::CarveDeadEnds()
+{
+  bool deadEndsExist = false;
+
+  do
+  {
+    deadEndsExist = false;
+
+    for (auto x = 0; x < size; x++)
+    {
+      for (auto y = 0; y < size; y++)
+      {
+        if (GetCellAt(x, y) == CellType::FLOOR)
+        {
+          auto rollRockNeighbourCount = 0;
+          if (GetCellAt(x - 1, y) == CellType::ROCK) { rollRockNeighbourCount++; }
+          if (GetCellAt(x + 1, y) == CellType::ROCK) { rollRockNeighbourCount++; }
+          if (GetCellAt(x, y - 1) == CellType::ROCK) { rollRockNeighbourCount++; }
+          if (GetCellAt(x, y + 1) == CellType::ROCK) { rollRockNeighbourCount++; }
+
+          if (rollRockNeighbourCount == 3)
+          {
+            deadEndsExist = true;
+            data[x][y] = CellType::ROCK;
+          }
+        }
+      }
+    }
+  }
+  while (deadEndsExist);
 }
 
 DungeonRoom::DungeonRoom(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
