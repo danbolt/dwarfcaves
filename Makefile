@@ -1,5 +1,5 @@
 SOURCE=src/*.cpp
-MYPROGRAM=generator
+MYPROGRAM=dwarfcaves
 
 FLAGS=
 

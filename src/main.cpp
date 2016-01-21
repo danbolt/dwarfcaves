@@ -7,7 +7,7 @@ int main(int argc, char* argv[])
 {
   if (argc <= 1)
   {
-    std::cout << "Please provide a seed value.\n Example:  $ generator 'foo'\n";
+    std::cout << "Please provide a seed value.\n Example:  $ dwarfcaves 'foo'\n";
 
     return 0;
   }
