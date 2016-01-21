@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <random>
+#include <string>
 
 class Dungeon;
 class DungeonRoom;
@@ -18,7 +19,7 @@ public:
     DOORWAY = 2
   };
 
-  Dungeon(int seed, unsigned int size, unsigned int roomAttempts);
+  Dungeon(std::string seed, unsigned int size, unsigned int roomAttempts);
 
   CellType GetCellAt(unsigned int x, unsigned int y);
 
@@ -28,7 +29,7 @@ private:
   std::vector<std::vector<CellType>> data;
   std::vector<DungeonRoom> rooms;
 
-  std::minstd_rand0 rng;
+  std::mt19937 rng;
 
   unsigned int size;
   const unsigned int minRoomWidth = 4;

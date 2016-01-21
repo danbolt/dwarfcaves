@@ -1,10 +1,21 @@
 #include <iostream>
+#include <string>
 
 #include "Dungeon.hpp"
 
-int main()
+int main(int argc, char* argv[])
 {
-  Dungeon d(0, 50, 100);
+  if (argc <= 1)
+  {
+    std::cout << "Please provide a seed value.\n Example:  $ generator 'foo'\n";
+
+    return 0;
+  }
+
+  std::string seedVal = std::string(argv[1]);
+  std::cout << seedVal << "\n";
+
+  Dungeon d(seedVal, 50, 100);
   
   for (auto it = 0; it < d.GetDungeonSize(); it++)
   {

@@ -1,10 +1,11 @@
 #include <vector>
 #include <functional>
 #include <iostream>
+#include <string>
 
 #include "Dungeon.hpp"
 
-Dungeon::Dungeon(int seed, unsigned int size, unsigned int roomAttempts)
+Dungeon::Dungeon(std::string seed, unsigned int size, unsigned int roomAttempts)
 {
   if (size < 1)
   {
@@ -20,7 +21,9 @@ Dungeon::Dungeon(int seed, unsigned int size, unsigned int roomAttempts)
 
   this->size = size;
 
-  rng.seed(seed);
+  std::seed_seq sequence (seed.begin(), seed.end());
+
+  rng.seed(sequence);
 
   SpawnRooms(roomAttempts);
   SpawnMazeCooridor();
