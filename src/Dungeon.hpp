@@ -30,12 +30,13 @@ private:
   std::minstd_rand0 rng;
 
   void SpawnRooms(unsigned int attempts);
+  void SpawnMazeCooridor();
 
   unsigned int size;
-  unsigned int minRoomWidth = 3;
-  unsigned int minRoomHeight = 3;
-  unsigned int maxRoomWidth = 10;
-  unsigned int maxRoomHeight = 10;
+  const unsigned int minRoomWidth = 3;
+  const unsigned int minRoomHeight = 3;
+  const unsigned int maxRoomWidth = 10;
+  const unsigned int maxRoomHeight = 10;
 };
 
 class DungeonRoom

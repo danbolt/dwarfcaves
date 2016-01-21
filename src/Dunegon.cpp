@@ -1,4 +1,5 @@
 #include <vector>
+#include <functional>
 
 #include "Dungeon.hpp"
 
@@ -21,6 +22,7 @@ Dungeon::Dungeon(int seed, unsigned int size, unsigned int roomAttempts)
   rng.seed(seed);
 
   SpawnRooms(roomAttempts);
+  SpawnMazeCooridor();
 }
 
 Dungeon::CellType Dungeon::GetCellAt(unsigned int x, unsigned int y)
@@ -95,6 +97,81 @@ void Dungeon::SpawnRooms(unsigned int attempts)
       }
     }
   }
+}
+
+void Dungeon::SpawnMazeCooridor()
+{
+  std::function<void(int, int)> floodFill = [&, this](int x, int y)
+  {
+    // Dont turn the surrounding walls into cooridors
+    if (x < 1 || x >= this->size - 1 || y < 1 || y >= this->size - 1)
+    {
+      return;
+    }
+
+    // Don't perform this logic on floor cells
+    if (this->GetCellAt(x, y) != CellType::ROCK)
+    {
+      return;
+    }
+
+    // Don't turn the corners of rooms into cooridors
+    for(DungeonRoom& room : this->rooms)
+    {
+      if (x == room.x - 1 && y == room.y - 1) { return; }
+      if (x == room.x + room.width && y == room.y - 1) { return; }
+      if (x == room.x - 1 && y == room.y + room.height) { return; }
+      if (x == room.x + room.width && y == room.y + room.height) { return; }
+    }
+
+    // count the number of diagonal neighbours that are floors
+    auto cornerNeighbourCount = 0; 
+    if (this->GetCellAt(x - 1, y - 1) == CellType::FLOOR) { cornerNeighbourCount++; }
+    if (this->GetCellAt(x + 1, y - 1) == CellType::FLOOR) { cornerNeighbourCount++; }
+    if (this->GetCellAt(x - 1, y + 1) == CellType::FLOOR) { cornerNeighbourCount++; }
+    if (this->GetCellAt(x + 1, y + 1) == CellType::FLOOR) { cornerNeighbourCount++; }
+
+    // count the number of neighbours that are rocks
+    auto rockNeighbourCount = 0;
+    if (this->GetCellAt(x - 1, y) == CellType::ROCK) { rockNeighbourCount++; }
+    if (this->GetCellAt(x + 1, y) == CellType::ROCK) { rockNeighbourCount++; }
+    if (this->GetCellAt(x, y - 1) == CellType::ROCK) { rockNeighbourCount++; }
+    if (this->GetCellAt(x, y + 1) == CellType::ROCK) { rockNeighbourCount++; }
+
+    // If this is rock, and the cell 
+    if (rockNeighbourCount >= 3 && cornerNeighbourCount < 3)
+    {
+      this->data[x][y] = CellType::FLOOR;
+      floodFill(x - 1, y);
+      floodFill(x + 1, y);
+      floodFill(x, y - 1);
+      floodFill(x, y + 1);
+    }
+  };
+
+  // find an initial point to flood-fill, then flood fill it
+  for (auto initialX = 1; initialX < size - 1; initialX++)
+  {
+    for (auto initialY = 1; initialY < size - 1; initialY++)
+    {
+      if (this->GetCellAt(initialX - 1, initialY - 1) == CellType::FLOOR &&
+      this->GetCellAt(initialX + 1, initialY - 1) == CellType::FLOOR &&
+      this->GetCellAt(initialX - 1, initialY + 1) == CellType::FLOOR &&
+      this->GetCellAt(initialX + 1, initialY + 1) == CellType::FLOOR)
+      {
+        return;
+      }
+
+      if (GetCellAt(initialX, initialY) == CellType::ROCK && 
+        GetCellAt(initialX + 1, initialY) == CellType::ROCK && GetCellAt(initialX - 1, initialY) == CellType::ROCK &&
+        GetCellAt(initialX, initialY + 1) == CellType::ROCK && GetCellAt(initialX, initialY - 1) == CellType::ROCK)
+      {
+        floodFill(initialX, initialY);
+      }
+    }
+  }
+
+  return;
 }
 
 DungeonRoom::DungeonRoom(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
