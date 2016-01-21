@@ -14,7 +14,8 @@ public:
   enum CellType
   {
     ROCK = 1,
-    FLOOR = 0
+    FLOOR = 0,
+    DOORWAY = 2
   };
 
   Dungeon(int seed, unsigned int size, unsigned int roomAttempts);
@@ -29,14 +30,15 @@ private:
 
   std::minstd_rand0 rng;
 
-  void SpawnRooms(unsigned int attempts);
-  void SpawnMazeCooridor();
-
   unsigned int size;
-  const unsigned int minRoomWidth = 3;
-  const unsigned int minRoomHeight = 3;
+  const unsigned int minRoomWidth = 4;
+  const unsigned int minRoomHeight = 4;
   const unsigned int maxRoomWidth = 10;
   const unsigned int maxRoomHeight = 10;
+
+  void SpawnRooms(unsigned int attempts);
+  void SpawnMazeCooridor();
+  void SpawnDoorways();
 };
 
 class DungeonRoom

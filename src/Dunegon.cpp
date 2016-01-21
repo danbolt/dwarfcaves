@@ -1,5 +1,6 @@
 #include <vector>
 #include <functional>
+#include <iostream>
 
 #include "Dungeon.hpp"
 
@@ -23,6 +24,7 @@ Dungeon::Dungeon(int seed, unsigned int size, unsigned int roomAttempts)
 
   SpawnRooms(roomAttempts);
   SpawnMazeCooridor();
+  SpawnDoorways();
 }
 
 Dungeon::CellType Dungeon::GetCellAt(unsigned int x, unsigned int y)
@@ -172,6 +174,58 @@ void Dungeon::SpawnMazeCooridor()
   }
 
   return;
+}
+
+void Dungeon::SpawnDoorways()
+{
+
+  for (DungeonRoom& room: rooms)
+  {
+    auto doorCount = 2 + (unsigned int)((float)(rng() - rng.min()) / (float)(rng.max() - rng.min()) * 10);
+    doorCount = doorCount < 5 ? doorCount : 1;
+
+    for (auto i = 0; i < doorCount; i++)
+    {
+      auto doorSide = (unsigned int)((float)(rng() - rng.min()) / (float)(rng.max() - rng.min()) * 4);
+      auto roll = (unsigned int)((float)(rng() - rng.min()) / (float)(rng.max() - rng.min()) * ((doorSide == 0 || doorSide == 2 ? room.height : room.width) - 2));
+
+      auto rollX = room.x + (doorSide == 0 ? room.width : 0) + (doorSide == 2 ? -1 : 0) + (doorSide == 1 || doorSide == 3 ? 1 + roll : 0);
+      auto rollY = room.y + (doorSide == 0 || doorSide == 2 ? 1 + roll : 0) + (doorSide == 1 ? -1 : 0) + (doorSide == 3 ? room.height : 0);
+      
+      // Don't put doors into places that don't have floors on both sides
+      if (roll == 0 || roll == 2)
+      {
+        if (GetCellAt(rollX - 1, rollY) != CellType::FLOOR || GetCellAt(rollX + 1, rollY) != CellType::FLOOR)
+        {
+          i--;
+          continue;
+        }
+      }
+      else if (roll == 1 || roll == 3)
+      {
+        if (GetCellAt(rollX, rollY - 1) != CellType::FLOOR || GetCellAt(rollX, rollY + 1) != CellType::FLOOR)
+        {
+          i--;
+          continue;
+        }
+      }
+
+      // Don't put doors into places that lead nowhere
+      auto rollRockNeighbourCount = 0;
+      if (GetCellAt(rollX - 1, rollY) == CellType::ROCK) { rollRockNeighbourCount++; }
+      if (GetCellAt(rollX + 1, rollY) == CellType::ROCK) { rollRockNeighbourCount++; }
+      if (GetCellAt(rollX, rollY - 1) == CellType::ROCK) { rollRockNeighbourCount++; }
+      if (GetCellAt(rollX, rollY + 1) == CellType::ROCK) { rollRockNeighbourCount++; }
+
+      if (rollRockNeighbourCount < 2)
+      {
+        i--;
+        continue;
+      }
+
+      data[rollX][rollY] = CellType::DOORWAY;
+    }
+  }
 }
 
 DungeonRoom::DungeonRoom(unsigned int x, unsigned int y, unsigned int width, unsigned int height)

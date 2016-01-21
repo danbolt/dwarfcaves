@@ -10,7 +10,20 @@ int main()
   {
     for (auto it2 = 0; it2 < d.GetDungeonSize(); it2++)
     {
-      std::cout << ((int)(d.GetCellAt(it2, it)) == 1 ? "⬜" : " ") << " ";
+      switch (d.GetCellAt(it2, it))
+      {
+        case Dungeon::CellType::FLOOR:
+          std::cout << " ";
+          break;  
+        case Dungeon::CellType::DOORWAY:
+          std::cout << "🚪";
+          break;
+        case Dungeon::CellType::ROCK:
+          std::cout << "⬜";
+          break;
+      }
+
+      std::cout << ' ';
     }
 
     std::cout << "\n";
