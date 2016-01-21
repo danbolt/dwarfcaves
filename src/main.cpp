@@ -47,10 +47,10 @@ int main(int argc, char* argv[])
           std::cout << " ";
           break;  
         case Dungeon::CellType::DOORWAY:
-          std::cout << "🚪";
+          std::cout << "d";
           break;
         case Dungeon::CellType::ROCK:
-          std::cout << "⬜";
+          std::cout << "▢";
           break;
       }
 
