@@ -9,6 +9,8 @@ This software gives no guaruntees that the Dwarf Caves generated are 100% traver
 ## Building
 To build, run the makefile with a tool like [GNU Make](https://www.gnu.org/software/make/). You'll need a C++11 compiler like [clang](http://clang.llvm.org/) or [gcc](https://gcc.gnu.org/) as well. For me, this involves entering `make` in the project's root folder.
 
+If you get an error saying that `clang++` doesn't exist, try running `make CC=g++` or with whatever your C++ compiler is called.
+
 ## Running
 Running dwarfcaves requires a seed, which you can pass it. If you want, you can also pass in cave size and a number of attempts at placing rooms. For example, entering:
 ```
