@@ -4,7 +4,7 @@
 
 int main()
 {
-  Dungeon d(-888, 50, 100);
+  Dungeon d(0, 50, 100);
   
   for (auto it = 0; it < d.GetDungeonSize(); it++)
   {

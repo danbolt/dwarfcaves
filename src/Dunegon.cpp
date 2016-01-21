@@ -159,7 +159,7 @@ void Dungeon::SpawnMazeCooridor()
       this->GetCellAt(initialX - 1, initialY + 1) == CellType::FLOOR &&
       this->GetCellAt(initialX + 1, initialY + 1) == CellType::FLOOR)
       {
-        return;
+        continue;
       }
 
       if (GetCellAt(initialX, initialY) == CellType::ROCK && 
