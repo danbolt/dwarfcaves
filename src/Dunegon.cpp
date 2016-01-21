@@ -148,10 +148,36 @@ void Dungeon::SpawnMazeCooridor()
     if (rockNeighbourCount >= 3 && cornerNeighbourCount < 3)
     {
       this->data[x][y] = CellType::FLOOR;
-      floodFill(x - 1, y);
-      floodFill(x + 1, y);
-      floodFill(x, y - 1);
-      floodFill(x, y + 1);
+
+      auto nextStepValue = this->rng() % 4;
+
+      switch (nextStepValue)
+      {
+        case 0:
+          floodFill(x - 1, y);
+          floodFill(x + 1, y);
+          floodFill(x, y - 1);
+          floodFill(x, y + 1);
+          break;
+        case 1:
+          floodFill(x + 1, y);
+          floodFill(x, y - 1);
+          floodFill(x, y + 1);
+          floodFill(x - 1, y);
+          break;
+        case 2:
+          floodFill(x, y - 1);
+          floodFill(x, y + 1);
+          floodFill(x - 1, y);
+          floodFill(x + 1, y);
+          break;
+        case 3:
+          floodFill(x, y + 1);
+          floodFill(x - 1, y);
+          floodFill(x + 1, y);
+          floodFill(x, y - 1);
+          break;
+      }
     }
   };
 
@@ -185,8 +211,7 @@ void Dungeon::SpawnDoorways()
 
   for (DungeonRoom& room: rooms)
   {
-    auto doorCount = 2 + (unsigned int)((float)(rng() - rng.min()) / (float)(rng.max() - rng.min()) * 10);
-    doorCount = doorCount < 5 ? doorCount : 1;
+    auto doorCount = 1 + (unsigned int)((float)(rng() - rng.min()) / (float)(rng.max() - rng.min()) * 4);
 
     for (auto i = 0; i < doorCount; i++)
     {
